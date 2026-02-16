@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Josue</title>
+    <style>
+        :root {
+            --pink: #ff4d6d;
+            --dark-red: #c9184a;
+            --soft-bg: #fff0f3;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--soft-bg);
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Lluvia de corazones de fondo */
+        .rain {
+            position: fixed;
+            top: -10%;
+            z-index: 0;
+            user-select: none;
+            pointer-events: none;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh); }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            width: 90%;
+            max-width: 550px;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(255, 77, 109, 0.2);
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-section {
+            display: flex;
+            justify-content: space-between;
+            min-height: 280px;
+        }
+
+        /* --- Texto Animado --- */
+        .lyrics {
+            width: 55%;
+            color: #5d4037;
+            font-size: 1rem;
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        .typewriter {
+            display: block;
+            overflow: hidden;
+            white-space: normal;
+            width: 0;
+            margin-bottom: 12px;
+            animation: typing 3s steps(40, end) forwards;
+        }
+
+        .d-1 { animation-delay: 1.5s; }
+        .d-2 { animation-delay: 4.5s; }
+        .d-3 { animation-delay: 8s; }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        /* --- Árbol a la derecha --- */
+        .tree-container {
+            position: relative;
+            width: 40%;
+            height: 250px;
+        }
+
+        .trunk {
+            width: 14px;
+            height: 0;
+            background: #6d4c41;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 4px;
+            animation: growTrunk 1.5s ease-out forwards;
+        }
+
+        @keyframes growTrunk {
+            to { height: 90px; }
+        }
+
+        .heart-leaf {
+            position: absolute;
+            background-color: var(--pink);
+            width: 12px;
+            height: 12px;
+            transform: rotate(-45deg) scale(0);
+            animation: pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .heart-leaf::before, .heart-leaf::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: inherit;
+            border-radius: 50%;
+        }
+        .heart-leaf::before { top: -6px; left: 0; }
+        .heart-leaf::after { left: 6px; top: 0; }
+
+        @keyframes pop {
+            to { transform: rotate(-45deg) scale(1); }
+        }
+
+        /* --- Contador y Pie --- */
+        .footer {
+            margin-top: 20px;
+            border-top: 1px solid #ffccd5;
+            padding-top: 15px;
+            text-align: center;
+        }
+
+        #timer {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--dark-red);
+            margin: 10px 0;
+        }
+
+        .love-msg {
+            font-size: 1.8rem;
+            color: var(--dark-red);
+            font-weight: 900;
+            margin-top: 15px;
+            animation: heartbeat 1.2s infinite;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="top-section">
+            <div class="lyrics">
+                <span class="typewriter">Para el amor de mi vida:</span>
+                <span class="typewriter d-1">Si pudiera elegir un lugar seguro, sería a tu lado.</span>
+                <span class="typewriter d-2">Cuanto más tiempo estoy contigo, más te sigo amando...</span>
+                <span class="typewriter d-3">A pesar de la distancia, mi corazón siempre te encuentra. ❤️</span>
+            </div>
+
+            <div class="tree-container" id="tree">
+                <div class="trunk"></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div style="color: #8d6e63;">Mi amor por ti comenzó hace...</div>
+            <div id="timer">Calculando...</div>
+            <div class="love-msg">JOSUE TE AMO ❤️</div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Fecha: 12 de enero de 2026
+        const startDate = new Date(2026, 0, 12, 0, 0, 0); 
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = now - startDate;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+            document.getElementById('timer').innerHTML = 
+                `${days} días ${hours} horas ${minutes} min ${seconds} seg`;
+        }
+        setInterval(updateTimer, 1000);
+        updateTimer();
+
+        // 2. Árbol Frondoso (180 corazones)
+        const tree = document.getElementById('tree');
+        const colors = ['#ff4d6d', '#ff758f', '#c9184a', '#ffb3c1', '#fa3e5f', '#ff8fa3'];
+
+        for (let i = 0; i < 180; i++) {
+            const leaf = document.createElement('div');
+            leaf.className = 'heart-leaf';
+            const angle = Math.random() * Math.PI * 2;
+            const radius = Math.random() * 85; 
+            const x = Math.cos(angle) * radius + 55; 
+            const y = Math.sin(angle) * (radius * 0.9) + 60;
+
+            leaf.style.left = `${x}%`;
+            leaf.style.top = `${y}px`;
+            leaf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            leaf.style.animationDelay = `${0.5 + (Math.random() * 4)}s`;
+            tree.appendChild(leaf);
+        }
+
+        // 3. Lluvia de corazones constante
+        function createRain() {
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤️';
+            heart.className = 'rain';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
+            heart.style.animationDuration = Math.random() * 3 + 2 + 's';
+            heart.style.opacity = Math.random();
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }
+        setInterval(createRain, 300);
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Para mi niñito Josue</title>
+
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    background: radial-gradient(circle, #6e0012, #290005);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    font-family: "Segoe UI", sans-serif;
+    color: white;
+  }
+
+  canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .mensaje {
+    position: relative;
+    margin-top: 20px;
+    text-align: center;
+    animation: aparecer 2.5s ease forwards;
+    opacity: 0;
+  }
+
+  .mensaje .linea1 {
+    font-size: 24px;
+    letter-spacing: 1px;
+  }
+
+  .mensaje .linea2 {
+    margin-top: 5px;
+    font-size: 40px;
+    font-weight: 900;
+    color: #ff2d5d;
+    text-shadow: 0 0 20px #ff5a7f, 0 0 40px #ff7c9a;
+    animation: latidoTexto 1.6s infinite;
+  }
+
+  @keyframes latidoTexto {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes aparecer {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- CARTA QUE APARECE AL HACER CLICK --- */
+  .carta {
+    position: fixed;
+    width: 80%;
+    max-width: 500px;
+    background: linear-gradient(180deg, #ffffff, #ffe6eb);
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 0 25px rgba(255, 0, 80, 0.7);
+    color: #2d000a;
+    font-size: 17px;
+    line-height: 1.4;
+    border: 2px solid #ff003c;
+    transform: scale(0);
+    opacity: 0;
+    transition: 0.5s ease;
+    z-index: 10;
+  }
+
+  .carta.mostrar {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  .cerrar {
+    margin-top: 20px;
+    display: inline-block;
+    padding: 10px 18px;
+    background: #ff003c;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(255,0,60,0.6);
+  }
+
+  .cerrar:hover {
+    background: #ff3366;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="corazonCanvas"></canvas>
+
+<div class="mensaje">
+  <div class="linea1">FELIZ CUMPLEAÑOS MI NIÑO JOSUE</div>
+  <div class="linea2">TE AMO</div>
+</div>
+
+<!-- CARTA OCULTA -->
+<div id="carta" class="carta">
+  Quiero escribirte estas palabras porque para mí eres alguien muy especial. Gracias por darme la confianza de escucharte y por permitirme contarte mis cosas también. No todo el mundo tiene ese regalo, y tú lo tienes.
+
+Sé que tu cumpleaños no es una fecha fácil para ti. Sé que en el pasado te lastimaron y que eso hizo que ese día perdiera el brillo que debería tener. Y aunque no puedo cambiar lo que pasó, sí quiero que sepas algo muy importante: tú no merecías nada de eso.
+
+Josué, eres una persona valiosa, sensible y fuerte, incluso cuando no lo sientes así. Que otros te hayan hecho daño no define quién eres, ni lo que mereces. Mereces amor, respeto y momentos felices.
+
+Quiero que sepas que, para mí, siempre serás un niño especial, alguien que importa, alguien que vale mucho. Aunque no te guste celebrar tu cumpleaños, espero que algún día puedas sentir que ese día también es tuyo, porque el mundo es mejor desde que tú estás en él.
+
+Gracias por ser tú, por confiar, por seguir adelante a pesar de todo. Te quiero mucho y te deseo paz, calma y sonrisas sinceras, hoy y siempre.TE AMOOO MI NIÑITO.
+  
+  <br><br>
+  <div class="cerrar" onclick="cerrarCarta()">Cerrar</div>
+</div>
+
+<script>
+/* CORAZÓN DE PARTÍCULAS */
+const canvas = document.getElementById("corazonCanvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+
+let particles = [];
+const numParticles = 900;
+
+function heartFunction(t) {
+  let x = 16 * Math.sin(t) ** 3;
+  let y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+  return { x: x, y: -y };
+}
+
+for (let i = 0; i < numParticles; i++) {
+  let t = Math.random() * Math.PI * 2;
+  let h = heartFunction(t);
+  particles.push({
+    baseX: h.x * 10,
+    baseY: h.y * 10,
+    size: Math.random() * 2 + 0.5,
+    speed: Math.random() * 0.02 + 0.01,
+    alpha: Math.random()
+  });
+}
+
+let time = 0;
+
+function animar() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  time += 0.03;
+  let latido = 1 + Math.sin(time * 2) * 0.1;
+
+  particles.forEach(p => {
+    let dx = p.baseX * latido;
+    let dy = p.baseY * latido;
+
+    ctx.beginPath();
+    ctx.arc(canvas.width / 2 + dx, canvas.height / 2 + dy, p.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,0,60,${p.alpha})`;
+    ctx.fill();
+
+    if (Math.random() < 0.01) {
+      ctx.beginPath();
+      ctx.arc(canvas.width / 2 + dx, canvas.height / 2 + dy, p.size * 4, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255,150,200,0.9)";
+      ctx.fill();
+    }
+  });
+
+  requestAnimationFrame(animar);
+}
+
+animar();
+
+/* --- MOSTRAR CARTA AL HACER CLICK SOBRE EL CORAZÓN --- */
+canvas.addEventListener("click", () => {
+  document.getElementById("carta").classList.add("mostrar");
+});
+
+function cerrarCarta() {
+  document.getElementById("carta").classList.remove("mostrar");
+}
+</script>
+
+</body>
+</html>
+
